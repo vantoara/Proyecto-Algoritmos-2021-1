@@ -10,25 +10,33 @@ class Guessing(Game):
         self.given_clues = []
         self.question = self.question_choice["question"]
         self.answer = self.question_choice["answers"]
-
+    
     def show_question(self):
         print(self.question)
 
+    # Aquí te devuelven un pista random si es que hay pistas que dar
     def get_clue(self):
-        if len(self.given_clues) == len(self.clues):
-            print("Ya no hay más pistas")
+        if not self.check_clue():
+            pass
         else:
-            new_clue = random.choice(self.clues)
-            while new_clue in self.given_clues:
-                new_clue = random.choice(self.clues)
-            self.given_clues.append(new_clue)
+            new_clue = self.clues[0] 
+            # A diferencia de los otros get_clue que arrojan pistas randomizadas, aquí en adivinanza las arroja en orden ya que tienen una jerarquía de importancia. Por ejemplo la última pista casi que te dice la palabra a adivinar, mientras que la primera es mucho más discreta.
             print(new_clue)
-            return self.given_clues
+            self.clues.remove(new_clue)
 
+    # Revisa si se han dado todas las pistas
+    def check_clue(self):
+        if len(self.given_clues) == len(self.clues):
+            print("\nYa no hay más pistas que dar.")
+            return False
+        else:
+            return True
+            
+    # Este es el juego en sí, se le pasa un parámetro y se compara con la respuesta de la API ya instanciada
     def guess(self, player_guess):
         if player_guess in self.answer:
-            print("Respuesta Correcta!")
+            print("\nRespuesta Correcta!")
             return True
         else:
-            print("Respuesta Incorrecta!")
+            print("\nRespuesta Incorrecta!")
             return False

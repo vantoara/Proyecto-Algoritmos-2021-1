@@ -15,6 +15,8 @@ class Room:
         return name_list #Este método se utiliza para construir el menú de opciones en cada cuarto y que objetos están disponibles para interactúar.
     
     def show_room(self): # Gráficas del juego
+        print("\n")
+        print("Ahorita te encuentras en: ")
         print(self.room["name"])
         # if self.room == "utilizar indices del diccionario y jalar de gráficas o igualar a distintos nombres y jalar de gráficas"
 

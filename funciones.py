@@ -11,7 +11,7 @@ from Shuffle import Shuffle
 from Quiz import Quiz
 from Memory import Memory
 from Logic import Logic
-from Sudoku_Game import Sudoku_Game
+from Color import Color
 from Room import Room
 import requests
 import random
@@ -105,14 +105,22 @@ def start_new_game(database):
                 avatars = ["Scharifker", "Eugenio Mendoza", "Pelusa", "Gandhi", "Metropavo", "Exodia", "Lorenzo Mendoza", "Becado"]
                 choose_avatar = enquiries.choose("\nEscoje uno de los siguientes avatares: ", avatars)
                 player.set_avatar(choose_avatar)
-                complete = False
+
+                print("\nHoy 5 de marzo de 2021, la Universidad sigue en cuarentena (esto no es novedad), lo que sí es novedad es que se robaron un Disco Duro de la Universidad del cuarto de redes que tiene toda la información de SAP de estudiantes, pagos y  asignaturas. Necesitamos que nos ayudes a recuperar el disco, para eso tienes minutos, antes de que el servidor se caiga y no se pueda hacer más nada. ¿Aceptas el reto?\n")
+
                 # Si te llegas a morir entonces el while loop se rompe (consecuentemente ocurre lo mismo en las funciones nested) y se para el 
-                while player.check_lives() and not complete:
-                    movement(player, api, complete) # Esta función se encuentra al final, ya que a continuación se desarrollan son los distintos juegos.
+                while player.check_lives():
+                    won = movement(player, api) # Esta función se encuentra al final, ya que a continuación se desarrollan son los distintos juegos.
+                    if won:
+                        break
                 
                 # Este if agarra el caso en el que perdiste tus vidas y hace un break que te arrojará al inicio del menú
                 if not player.check_lives():
                     print("\nMuy mala jugada, te has quedado sin vidas!")
+                    break
+                
+                else:
+                    print(f"\nFelicitaciones, este trimeste ha sido muy difícil para todos, y a pesar de las desdichas y las angustias has podido entregar el Disco Duro a su lugar correspondiente. La universidad se encuentra agradecida contigo, {player.avatar}.")
                     break
 
             else:
@@ -543,7 +551,7 @@ def logic_game(room, obj, player):
 # Sudoku
 def final_game(room, obj, player):
 
-    game = Sudoku_Game(room, obj)
+    game = Color(room, obj)
 
     if "carnet" not in player.get_inventory() and "Disco Duro" not in player.get_inventory():
         game.show_msg()
@@ -551,23 +559,27 @@ def final_game(room, obj, player):
     else:
 
         game.show_game()
-        game.show_sudoku_question()
-        game.show_sudoku()
+        game.color_question()
 
-        complete = game.guess_sudoku(player)
+        while player.check_lives():
+            
+            answer = game.choose_color()
 
-        if complete:
-            print("\nGanaste el juego! Pudiste recuperar el Disco")
-            return complete
+            if answer == True:
+                print("\nGanaste el juego! Pudiste recuperar el Disco")
+                won = True
+                return won
+            elif answer == False:
+                player.update_lives(-1)
 
-def movement(player, api, complete):
+def movement(player, api):
     # Comienzas en la biblioteca
     room = 1
     position = Room(room)
     print(f"\nBienvenido {player.get_avatar()}, gracias por tu disposición a ayudarnos a resolver este inconveniente,  te encuentras actualmente ubicado en la biblioteca, revisa el menú de opciones para ver qué acciones puedes realizar. Recuerda que el tiempo corre más rápido que un trimestre en este reto.")
     position.show_room()
 
-    while player.check_lives() and not complete:
+    while player.check_lives():
 
         can_break_door = api.json()[3]["objects"][0]["game"]["award"] in player.get_inventory()
         options = ["Ir a otra habitación", "Interactuar"]
@@ -607,6 +619,7 @@ def movement(player, api, complete):
                     room = 0
 
             position = Room(room)
+            print("\n"*40)
             position.show_room()
 
         else:
@@ -645,8 +658,11 @@ def movement(player, api, complete):
 
             elif room == 4:
                 if object_index == 0:
-                    complete = final_game(room, object_index, player)
+                    won = final_game(room, object_index, player)
+                    if won:
+                        break
                 elif object_index == 1:
                     shuffle_game(room, object_index, player)
                 else:
                     number_game(room, object_index, player)
+    return won

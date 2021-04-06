@@ -7,7 +7,6 @@ class Player:
         self.inventory = []
         self.lives = 0.0
         self.clues = 0
-        self.games_played = 0
 
     def set_difficulty(self, lives, clues):
         self.lives = lives

@@ -431,6 +431,7 @@ def number_game(room, obj, player):
                     choice_clue = enquiries.choose("\n¿Desea obtener una pista?", options_clue)
                     if choice_clue == "Si":
                             game.get_number_clue(player_number)
+                            player.update_clues()
 
 # Palabras Mezcladas
 def shuffle_game(room, obj, player):

@@ -1,5 +1,7 @@
 # La idea original era un sudoku como juego final, sin embargo, no pude solventar algunos problemas al pedir el input de la columna, mi idea era hacer un código similar al que tenía en el juego de Memoria.
 
+# No lo incluí en el diagrama de clases porque NO lo utilizo, está sin validar, lo dejé para terminarlo a futuro así como también reflejar mi esfuerzo.
+
 from Game import Game
 from sudoku import Sudoku
 import enquiries
